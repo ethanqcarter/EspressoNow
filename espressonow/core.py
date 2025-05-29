@@ -67,11 +67,13 @@ class CoffeeShopFinder:
         if min_rating:
             coffee_shops = self._filter_by_rating(coffee_shops, min_rating)
         
-        # Calculate distances and sort by distance
+        # Calculate distances and sort by rating (highest first), then distance
         for shop in coffee_shops:
             shop.distance = self.location_service.calculate_distance(location, shop.location)
         
-        coffee_shops.sort(key=lambda x: x.distance or float('inf'))
+        # Sort by rating (highest first), then by distance (closest first)
+        # Handle None ratings by treating them as 0
+        coffee_shops.sort(key=lambda x: (-(x.rating or 0), x.distance or float('inf')))
         
         return SearchResult(
             query_location=location,
@@ -151,7 +153,7 @@ class CoffeeShopFinder:
             headers = {
                 'Content-Type': 'application/json',
                 'X-Goog-Api-Key': self.api_key,
-                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.priceLevel,places.nationalPhoneNumber,places.id'
+                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.priceLevel,places.nationalPhoneNumber,places.id,places.regularOpeningHours'
             }
             
             response = requests.post(self.base_url, json=request_body, headers=headers)
@@ -195,6 +197,12 @@ class CoffeeShopFinder:
             display_name = place.get('displayName', {})
             name = display_name.get('text', 'Unknown') if display_name else 'Unknown'
             
+            # Extract opening hours
+            opening_hours = []
+            regular_hours = place.get('regularOpeningHours', {})
+            if regular_hours and 'weekdayDescriptions' in regular_hours:
+                opening_hours = regular_hours['weekdayDescriptions']
+            
             return CoffeeShop(
                 name=name,
                 address=place.get('formattedAddress', 'Address not available'),
@@ -202,6 +210,7 @@ class CoffeeShopFinder:
                 rating=place.get('rating'),
                 price_level=self._convert_price_level(place.get('priceLevel')),
                 phone=place.get('nationalPhoneNumber'),
+                opening_hours=opening_hours,
                 place_id=place.get('id')
             )
             

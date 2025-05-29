@@ -11,6 +11,8 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from dotenv import load_dotenv
+import urllib.parse
+from datetime import datetime
 
 from .core import CoffeeShopFinder
 from .location import LocationService
@@ -31,14 +33,6 @@ def format_rating(rating: Optional[float]) -> str:
     return f"{stars} ({rating:.1f})"
 
 
-def format_price_level(price_level: Optional[int]) -> str:
-    """Format price level with dollar signs"""
-    if price_level is None:
-        return "No price info"
-    
-    return "$" * price_level
-
-
 def format_distance(distance: Optional[float]) -> str:
     """Format distance"""
     if distance is None:
@@ -50,6 +44,40 @@ def format_distance(distance: Optional[float]) -> str:
         return f"{distance:.1f}km"
 
 
+def generate_google_maps_link(coffee_shop: CoffeeShop) -> str:
+    """Generate a short Google Maps link for the coffee shop"""
+    # Use the coffee shop name and coordinates for the search
+    query = f"{coffee_shop.name} {coffee_shop.location.latitude},{coffee_shop.location.longitude}"
+    encoded_query = urllib.parse.quote(query)
+    return f"https://maps.google.com/?q={encoded_query}"
+
+
+def get_current_day_hours(opening_hours: Optional[list]) -> str:
+    """Get opening hours for the current day"""
+    if not opening_hours:
+        return "Hours N/A"
+    
+    # Get current day of week (0=Monday, 6=Sunday)
+    current_day = datetime.now().weekday()
+    day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    current_day_name = day_names[current_day]
+    
+    # Look for today's hours
+    for hours in opening_hours:
+        if current_day_name.lower() in hours.lower():
+            # Extract just the hours part, removing the day name
+            hours_part = hours.split(": ", 1)
+            if len(hours_part) > 1:
+                return hours_part[1]
+            return hours
+    
+    # If no specific day found, return first entry or default
+    if opening_hours:
+        return opening_hours[0]
+    
+    return "Hours N/A"
+
+
 def display_coffee_shops(coffee_shops: list[CoffeeShop], location: Location):
     """Display coffee shops in a beautiful table"""
     if not coffee_shops:
@@ -58,46 +86,75 @@ def display_coffee_shops(coffee_shops: list[CoffeeShop], location: Location):
     
     table = Table(title="☕ Specialty Coffee Shops Near You", show_header=True, header_style="bold magenta")
     table.add_column("Name", style="cyan", no_wrap=True)
-    table.add_column("Address", style="white")
+    table.add_column("Google Maps", style="blue")
     table.add_column("Rating", justify="center")
-    table.add_column("Price", justify="center")
-    table.add_column("Distance", justify="right", style="green")
-    table.add_column("Phone", style="blue")
+    table.add_column("Today's Hours", style="green")
+    table.add_column("Distance", justify="right", style="yellow")
     
     for shop in coffee_shops:
+        maps_link = generate_google_maps_link(shop)
+        today_hours = get_current_day_hours(shop.opening_hours)
+        
         table.add_row(
             shop.name,
-            shop.address,
+            f"[link={maps_link}]📍 View on Maps[/link]",
             format_rating(shop.rating),
-            format_price_level(shop.price_level),
-            format_distance(shop.distance),
-            shop.phone or "N/A"
+            today_hours,
+            format_distance(shop.distance)
         )
     
     console.print(table)
 
 
-@click.group()
-@click.version_option(version="0.1.0", prog_name="EspressoNow")
-def cli():
-    """☕ EspressoNow - Find specialty coffee shops near you!"""
-    pass
-
-
-@cli.command()
-@click.option('--radius', '-r', default=2.0, help='Search radius in kilometers (default: 2.0)')
+@click.group(invoke_without_command=True)
+@click.version_option(version="0.2.0", prog_name="EspressoNow")
+@click.option('--radius', '-r', default=5.0, help='Search radius in kilometers (default: 5.0)')
 @click.option('--max-results', '-n', default=10, help='Maximum number of results (default: 10)')
 @click.option('--location', '-l', help='Search location (address or "lat,lng")')
 @click.option('--api-key', help='Google Places API key (or set GOOGLE_PLACES_API_KEY env var)')
 @click.option('--min-rating', type=float, help='Minimum rating (e.g., 4.0 for >4 stars)')
 @click.option('--exclude-chains', is_flag=True, help='Exclude chain coffee shops (Starbucks, Dunkin, etc.)')
-@click.option('--specialty-only', is_flag=True, help='Show only specialty coffee (4+ stars, no chains)')
+@click.option('--specialty-only', is_flag=True, default=True, help='Show only specialty coffee (4+ stars, no chains) - DEFAULT')
+@click.option('--include-all', is_flag=True, help='Include all coffee shops (disables specialty-only default)')
+@click.pass_context
+def cli(ctx, radius: float, max_results: int, location: Optional[str], api_key: Optional[str], 
+        min_rating: Optional[float], exclude_chains: bool, specialty_only: bool, include_all: bool):
+    """☕ EspressoNow - Find specialty coffee shops near you!
+    
+    Run 'espresso' to search with default settings, or use 'espresso search' for the same functionality.
+    Use 'espresso config' to check your API key configuration.
+    """
+    if ctx.invoked_subcommand is None:
+        # No subcommand provided, run search with the provided options
+        ctx.invoke(search, radius=radius, max_results=max_results, location=location, 
+                  api_key=api_key, min_rating=min_rating, exclude_chains=exclude_chains,
+                  specialty_only=specialty_only, include_all=include_all)
+
+
+@cli.command()
+@click.option('--radius', '-r', default=5.0, help='Search radius in kilometers (default: 5.0)')
+@click.option('--max-results', '-n', default=10, help='Maximum number of results (default: 10)')
+@click.option('--location', '-l', help='Search location (address or "lat,lng")')
+@click.option('--api-key', help='Google Places API key (or set GOOGLE_PLACES_API_KEY env var)')
+@click.option('--min-rating', type=float, help='Minimum rating (e.g., 4.0 for >4 stars)')
+@click.option('--exclude-chains', is_flag=True, help='Exclude chain coffee shops (Starbucks, Dunkin, etc.)')
+@click.option('--specialty-only', is_flag=True, default=True, help='Show only specialty coffee (4+ stars, no chains) - DEFAULT')
+@click.option('--include-all', is_flag=True, help='Include all coffee shops (disables specialty-only default)')
 def search(radius: float, max_results: int, location: Optional[str], api_key: Optional[str], 
-          min_rating: Optional[float], exclude_chains: bool, specialty_only: bool):
+          min_rating: Optional[float], exclude_chains: bool, specialty_only: bool, include_all: bool):
     """Search for specialty coffee shops near your location"""
     
-    # Handle specialty-only flag
-    if specialty_only:
+    # Handle the new default behavior
+    if include_all:
+        specialty_only = False
+        exclude_chains = False
+        min_rating = None
+    elif specialty_only and not min_rating and not exclude_chains:
+        # Default specialty-only behavior
+        min_rating = 4.0
+        exclude_chains = True
+    elif specialty_only:
+        # Explicit specialty-only flag
         min_rating = 4.0
         exclude_chains = True
     
@@ -174,8 +231,10 @@ def search(radius: float, max_results: int, location: Optional[str], api_key: Op
         filter_info.append(f"⭐ Min Rating: {min_rating}")
     if exclude_chains:
         filter_info.append("🚫 Chains Excluded")
-    if specialty_only:
-        filter_info.append("☕ Specialty Only")
+    if specialty_only and not include_all:
+        filter_info.append("☕ Specialty Only (Default)")
+    if include_all:
+        filter_info.append("🔍 All Coffee Shops")
     
     filter_text = " | ".join(filter_info)
     search_info_text = (
@@ -217,11 +276,11 @@ def search(radius: float, max_results: int, location: Optional[str], api_key: Op
         
         if min_rating or exclude_chains:
             suggestions.extend([
-                "   • Lower the minimum rating with [cyan]--min-rating[/cyan]",
-                "   • Include chains by removing [cyan]--exclude-chains[/cyan]"
+                "   • Include all coffee shops with [cyan]--include-all[/cyan]",
+                "   • Lower the minimum rating with [cyan]--min-rating[/cyan]"
             ])
         else:
-            suggestions.append("   • Check that your location has specialty coffee shops nearby")
+            suggestions.append("   • Check that your location has coffee shops nearby")
         
         console.print(Panel(
             "\n".join(suggestions),

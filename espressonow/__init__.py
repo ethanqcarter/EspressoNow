@@ -5,7 +5,7 @@ A Python CLI tool that uses the Google Places API to discover
 high-quality coffee shops in your area or any specified location.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "ethanqcarter"
 __email__ = "ethanqcarter@gmail.com"
 

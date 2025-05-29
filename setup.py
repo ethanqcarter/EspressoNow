@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="espressonow",
-    version="0.1.0",
+    version="0.2.0",
     author="ethanqcarter",
     author_email="ethanqcarter@gmail.com",
     description="A CLI tool to find specialty coffee shops near you",
