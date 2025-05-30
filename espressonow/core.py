@@ -4,7 +4,8 @@ Core coffee shop finding functionality
 
 import requests
 import os
-from typing import List, Optional
+import time
+from typing import List, Optional, Set
 from .models import CoffeeShop, Location, SearchResult
 from .location import LocationService
 
@@ -30,7 +31,7 @@ class CoffeeShopFinder:
         """
         self.api_key = api_key or os.getenv('GOOGLE_PLACES_API_KEY')
         self.location_service = LocationService()
-        self.base_url = "https://places.googleapis.com/v1/places:searchNearby"
+        self.base_url = "https://places.googleapis.com/v1/places:searchText"
     
     def search_nearby(
         self, 
@@ -41,7 +42,7 @@ class CoffeeShopFinder:
         exclude_chains: bool = False
     ) -> SearchResult:
         """
-        Search for coffee shops near a location
+        Search for coffee shops near a location using pagination for comprehensive results
         
         Args:
             location: Location to search around
@@ -56,8 +57,8 @@ class CoffeeShopFinder:
         coffee_shops = []
         
         if self.api_key:
-            # Use Google Places API if available
-            coffee_shops = self._search_google_places(location, radius_km, max_results * 2)  # Get more to filter
+            # Use pagination to get comprehensive results
+            coffee_shops = self._search_with_pagination(location, radius_km, max_results * 3)  # Get more to filter
         # If no API key, return empty results
         
         # Apply filters
@@ -81,6 +82,52 @@ class CoffeeShopFinder:
             total_results=len(coffee_shops),
             search_radius_km=radius_km
         )
+    
+    def _search_with_pagination(
+        self, 
+        location: Location, 
+        radius_km: float, 
+        target_results: int
+    ) -> List[CoffeeShop]:
+        """
+        Search using pagination to get comprehensive results
+        
+        Args:
+            location: Location to search around
+            radius_km: Search radius in kilometers
+            target_results: Target number of results to find
+            
+        Returns:
+            Deduplicated list of CoffeeShop objects
+        """
+        all_shops = []
+        seen_place_ids: Set[str] = set()
+        next_page_token = None
+        max_pages = 3  # Limit to prevent infinite loops (3 pages = up to 60 results)
+        page_count = 0
+        
+        while page_count < max_pages and len(all_shops) < target_results:
+            shops, next_page_token = self._search_google_places_page(
+                location, radius_km, 20, next_page_token
+            )
+            
+            # Add new unique shops
+            for shop in shops:
+                if shop.place_id and shop.place_id not in seen_place_ids:
+                    all_shops.append(shop)
+                    seen_place_ids.add(shop.place_id)
+            
+            page_count += 1
+            
+            # If no next page token, we've reached the end
+            if not next_page_token:
+                break
+            
+            # Small delay between requests to be respectful to the API
+            if next_page_token:
+                time.sleep(0.2)
+        
+        return all_shops
     
     def _filter_chains(self, coffee_shops: List[CoffeeShop]) -> List[CoffeeShop]:
         """
@@ -113,32 +160,34 @@ class CoffeeShopFinder:
         """
         return [shop for shop in coffee_shops if shop.rating and shop.rating >= min_rating]
     
-    def _search_google_places(
+    def _search_google_places_page(
         self, 
         location: Location, 
         radius_km: float, 
-        max_results: int
-    ) -> List[CoffeeShop]:
+        page_size: int,
+        page_token: Optional[str] = None
+    ) -> tuple[List[CoffeeShop], Optional[str]]:
         """
-        Search using Google Places API (New)
+        Search a single page using Google Places API (New) Text Search
         
         Args:
             location: Location to search around
             radius_km: Search radius in kilometers
-            max_results: Maximum number of results
+            page_size: Number of results per page
+            page_token: Token for pagination
             
         Returns:
-            List of CoffeeShop objects
+            Tuple of (list of CoffeeShop objects, next page token)
         """
         try:
             # Convert km to meters for Google Places API
             radius_m = int(radius_km * 1000)
             
-            # Prepare request body for new Places API
+            # Prepare request body for Text Search API
             request_body = {
-                "includedTypes": ["cafe", "coffee_shop"],
-                "maxResultCount": min(max_results, 20),  # API limit is 20
-                "locationRestriction": {
+                "textQuery": "coffee shops",
+                "pageSize": min(page_size, 20),  # API limit is 20
+                "locationBias": {
                     "circle": {
                         "center": {
                             "latitude": location.latitude,
@@ -146,14 +195,19 @@ class CoffeeShopFinder:
                         },
                         "radius": radius_m
                     }
-                }
+                },
+                "includedType": "cafe"
             }
+            
+            # Add page token if provided
+            if page_token:
+                request_body["pageToken"] = page_token
             
             # Prepare headers
             headers = {
                 'Content-Type': 'application/json',
                 'X-Goog-Api-Key': self.api_key,
-                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.priceLevel,places.nationalPhoneNumber,places.id,places.regularOpeningHours'
+                'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.location,places.rating,places.priceLevel,places.nationalPhoneNumber,places.id,places.regularOpeningHours,nextPageToken'
             }
             
             response = requests.post(self.base_url, json=request_body, headers=headers)
@@ -166,11 +220,12 @@ class CoffeeShopFinder:
                 if shop:
                     coffee_shops.append(shop)
             
-            return coffee_shops
+            next_page_token = data.get('nextPageToken')
+            return coffee_shops, next_page_token
             
         except Exception as e:
             print(f"Error searching Google Places: {e}")
-            return []
+            return [], None
     
     def _parse_google_place(self, place: dict) -> Optional[CoffeeShop]:
         """

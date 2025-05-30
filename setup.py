@@ -3,12 +3,15 @@ from setuptools import setup, find_packages
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
+with open("requirements.txt", "r", encoding="utf-8") as fh:
+    requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
+
 setup(
     name="espressonow",
-    version="0.2.0",
-    author="ethanqcarter",
+    version="0.3.0",
+    author="Ethan Carter",
     author_email="ethanqcarter@gmail.com",
-    description="A CLI tool to find specialty coffee shops near you",
+    description="A CLI tool for finding specialty coffee shops near you",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ethanqcarter/EspressoNow",
@@ -28,21 +31,14 @@ setup(
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     ],
     python_requires=">=3.8",
-    install_requires=[
-        "requests>=2.31.0",
-        "click>=8.1.0",
-        "rich>=13.0.0",
-        "geocoder>=1.38.1",
-        "python-dotenv>=1.0.0",
-        "pydantic>=2.0.0",
-        "typer>=0.9.0",
-    ],
+    install_requires=requirements,
     entry_points={
         "console_scripts": [
             "espresso=espressonow.cli:main",
+            "espressonow=espressonow.cli:main",
         ],
     },
-    keywords="coffee, cli, places, api, specialty, coffee shops",
+    keywords="coffee, cli, maps, places, google-places, specialty-coffee",
     project_urls={
         "Bug Reports": "https://github.com/ethanqcarter/EspressoNow/issues",
         "Source": "https://github.com/ethanqcarter/EspressoNow",
