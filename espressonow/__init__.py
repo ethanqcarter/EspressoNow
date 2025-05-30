@@ -2,7 +2,7 @@
 EspressoNow - Find specialty coffee shops near you.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __author__ = "Ethan Carter"
 __email__ = "ethanqcarter@gmail.com"
 

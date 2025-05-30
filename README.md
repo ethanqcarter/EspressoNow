@@ -138,84 +138,41 @@ espresso search --km
 espresso search --api-key your_google_places_api_key
 ```
 
-### Export results to YAML file
-```bash
-espresso search --export-yaml coffee_shops.yaml
-```
-
-### Export open coffee shops to YAML
-```bash
-espresso search --open --export-yaml open_shops.yaml
-```
-
 ## Example Output
 
 Here's what you'll see when searching for specialty coffee in San Francisco:
 
 ```bash
-$ espresso search --location "37.7749,-122.4194" --radius 2 --max-results 10
-```
+$ espresso search --location "37.7749,-122.4194" --radius 2 --max-results 5
+Using provided coordinates: 37.7749, -122.4194
+⠋ Searching for coffee shops...
 
-## Output
+╭─────────────────────────────────────────────────────── Search Info ───────────────────────────────────────────────────────╮
+│ 📍 Search Location: 37.7749, -122.4194                                                                                    │
+│ 🔍 Search Radius: 2.0mi                                                                                                   │
+│ 📊 Results Found: 38                                                                                                      │
+│ 🔧 Filters: ⭐ Min Rating: 4.0 | 🚫 Chains Excluded | ☕ Specialty Only (Default)                                         │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+                            ☕ Specialty Coffee Shops Near You                             
+┏━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┓
+┃ Name                ┃ Google Maps     ┃      Rating      ┃ Today's Hours     ┃ Distance ┃
+┡━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━┩
+│ Social Cafe         │ 📍 View on Maps │ ⭐⭐⭐⭐⭐ (5.0) │ 7:30 AM – 3:00 PM │    0.9mi │
+│ Third Wheel Coffee  │ 📍 View on Maps │ ⭐⭐⭐⭐⭐ (5.0) │ 7:00 AM – 3:00 PM │    0.9mi │
+│ Cable Car CoffeeSF  │ 📍 View on Maps │  ⭐⭐⭐⭐ (4.9)  │ 4:30 AM – 4:30 PM │    0.9mi │
+│ Cafe Suspiro        │ 📍 View on Maps │  ⭐⭐⭐⭐ (4.8)  │ 8:00 AM – 3:00 PM │    0.5mi │
+│ Unexpected Era Café │ 📍 View on Maps │  ⭐⭐⭐⭐ (4.8)  │ 7:00 AM – 3:00 PM │    0.5mi │
+└─────────────────────┴─────────────────┴──────────────────┴───────────────────┴──────────┘
+```
 
 EspressoNow displays results in a beautiful table format showing:
 
 - ☕ **Name** - Coffee shop name
-- 📍 **Address** - Street address
-- ⭐ **Rating** - Star rating (1-5)
-- 💰 **Price** - Price level ($-$$$$)
-- 📏 **Distance** - Distance from search location
-- 📞 **Phone** - Contact number
-
-## YAML Export
-
-EspressoNow can export search results to YAML files using the `--export-yaml` flag:
-
-```bash
-espresso search --location "San Francisco, CA" --export-yaml sf_coffee.yaml
-```
-
-### YAML Structure
-
-The exported YAML file includes:
-
-```yaml
-%YAML 1.2
----
-search_info:
-  location:
-    latitude: 37.7749
-    longitude: -122.4194
-  search_radius: 2.0
-  radius_unit: miles
-  total_results: 3
-  exported_at: '2025-05-30T16:03:25.525805'
-coffee_shops:
-- name: Social Cafe
-  address: 804 Bryant St, San Francisco, CA 94103, USA
-  location:
-    latitude: 37.775997
-    longitude: -122.402995
-  rating: 5.0
-  price_level: 1
-  phone: (415) 829-3259
-  opening_hours:
-  - 'Monday: 7:30 AM – 4:00 PM'
-  - 'Tuesday: 7:30 AM – 3:00 PM'
-  # ... more days
-  distance: 1.45
-  distance_unit: miles
-  place_id: ChIJJTqnmmx_j4ARY4Gi004ITPc
-# ... more coffee shops
-...
-```
-
-**Features:**
-- 📊 **Complete data export** - All coffee shop details and metadata
-- 🎯 **Structured format** - Easy to parse and process programmatically  
-- 🕐 **Timestamp included** - When the search was performed
-- 📍 **Location context** - Search coordinates and radius
-- ✨ **Clean formatting** - Formatted with `yaypp` for readable YAML structure
+- 📍 **Google Maps** - Link to view location on Google Maps
+- ⭐ **Rating** - Star rating (1-5) with visual stars
+- 🕐 **Today's Hours** - Current day's opening hours with color coding (red=closed, green=open)
+- 📏 **Distance** - Distance from search location in miles or kilometers
 
 ## API Integration
 
@@ -261,7 +218,22 @@ espresso search --location "San Francisco, CA"
 
 ## Changelog
 
-### v0.3.0 (Latest)
+### v0.4.1 (Latest)
+- **📚 Documentation**: Updated README with real San Francisco output examples
+- **🧹 Cleanup**: Removed YAML export documentation section for cleaner focus
+- **✨ Better Examples**: Added actual CLI output showing beautiful table formatting
+- **🎯 Improved UX**: Enhanced documentation with real-world usage examples
+
+### v0.4.0
+- **🚀 Enhanced Packaging**: Added modern pyproject.toml configuration for better packaging standards
+- **📦 Build System**: Enhanced build system with comprehensive dependency management
+- **📊 YAML Export**: Added YAML export functionality for search results
+- **🕐 Open Filter**: Improved CLI with --open flag to filter currently open coffee shops
+- **📏 Distance Units**: Enhanced distance filtering with proper miles/km unit support
+- **🔄 API Upgrade**: Upgraded to Google Places Text Search API with intelligent pagination
+- **🎯 Better UX**: Better error handling and user experience improvements
+
+### v0.3.0
 - **🚀 Major Performance Improvement**: Implemented intelligent pagination using Google Places Text Search API
 - **📈 10x Better Coverage**: Now finds 40+ coffee shops in 2km radius vs 3-4 previously
 - **🔄 Comprehensive Results**: Uses `nextPageToken` to get up to 60 results with automatic deduplication
