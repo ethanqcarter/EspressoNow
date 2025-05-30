@@ -39,38 +39,52 @@ class CoffeeShopFinder:
         radius_km: float = 2.0,
         max_results: int = 10,
         min_rating: Optional[float] = None,
-        exclude_chains: bool = False
+        exclude_chains: bool = False,
+        use_miles: bool = False,
+        open_only: bool = False
     ) -> SearchResult:
         """
         Search for coffee shops near a location using pagination for comprehensive results
         
         Args:
             location: Location to search around
-            radius_km: Search radius in kilometers
+            radius_km: Search radius in kilometers (or miles if use_miles=True)
             max_results: Maximum number of results to return
             min_rating: Minimum rating filter (e.g., 4.0 for >4 stars)
             exclude_chains: Whether to exclude chain coffee shops
+            use_miles: Whether radius is in miles instead of kilometers
+            open_only: Whether to show only currently open coffee shops
             
         Returns:
             SearchResult containing found coffee shops
         """
+        # Convert miles to km if needed
+        search_radius_km = radius_km * 1.60934 if use_miles else radius_km
+        
         coffee_shops = []
         
         if self.api_key:
-            # Use pagination to get comprehensive results
-            coffee_shops = self._search_with_pagination(location, radius_km, max_results * 3)  # Get more to filter
+            # Use pagination to get comprehensive results with larger search area
+            # Search with 2x radius to ensure we don't miss edge cases, then filter precisely
+            coffee_shops = self._search_with_pagination(location, search_radius_km * 2, max_results * 5)
         # If no API key, return empty results
         
-        # Apply filters
+        # Calculate distances first
+        for shop in coffee_shops:
+            shop.distance = self.location_service.calculate_distance(location, shop.location)
+        
+        # Filter by actual distance (this is the key fix!)
+        coffee_shops = [shop for shop in coffee_shops if shop.distance and shop.distance <= search_radius_km]
+        
+        # Apply other filters
         if exclude_chains:
             coffee_shops = self._filter_chains(coffee_shops)
         
         if min_rating:
             coffee_shops = self._filter_by_rating(coffee_shops, min_rating)
         
-        # Calculate distances and sort by rating (highest first), then distance
-        for shop in coffee_shops:
-            shop.distance = self.location_service.calculate_distance(location, shop.location)
+        if open_only:
+            coffee_shops = self._filter_open_only(coffee_shops)
         
         # Sort by rating (highest first), then by distance (closest first)
         # Handle None ratings by treating them as 0
@@ -80,7 +94,8 @@ class CoffeeShopFinder:
             query_location=location,
             coffee_shops=coffee_shops[:max_results],
             total_results=len(coffee_shops),
-            search_radius_km=radius_km
+            search_radius_km=radius_km,  # Keep original radius for display
+            use_miles=use_miles
         )
     
     def _search_with_pagination(
@@ -159,6 +174,117 @@ class CoffeeShopFinder:
             Filtered list with only highly-rated coffee shops
         """
         return [shop for shop in coffee_shops if shop.rating and shop.rating >= min_rating]
+    
+    def _filter_open_only(self, coffee_shops: List[CoffeeShop]) -> List[CoffeeShop]:
+        """
+        Filter to show only currently open coffee shops
+        
+        Args:
+            coffee_shops: List of coffee shops to filter
+            
+        Returns:
+            Filtered list with only currently open coffee shops
+        """
+        from datetime import datetime
+        
+        def is_shop_open(shop: CoffeeShop) -> bool:
+            """Check if a coffee shop is currently open"""
+            if not shop.opening_hours:
+                return False  # If no hours info, assume closed
+            
+            # Get current day of week (0=Monday, 6=Sunday)
+            current_day = datetime.now().weekday()
+            day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            current_day_name = day_names[current_day]
+            
+            # Look for today's hours
+            for hours in shop.opening_hours:
+                if current_day_name.lower() in hours.lower():
+                    # Extract just the hours part, removing the day name
+                    hours_part = hours.split(": ", 1)
+                    if len(hours_part) > 1:
+                        hours_text = hours_part[1]
+                    else:
+                        hours_text = hours
+                    
+                    return self._is_currently_open(hours_text)
+            
+            # If no specific day found, check first entry
+            if shop.opening_hours:
+                return self._is_currently_open(shop.opening_hours[0])
+            
+            return False
+        
+        return [shop for shop in coffee_shops if is_shop_open(shop)]
+    
+    def _is_currently_open(self, hours_text: str) -> bool:
+        """Check if a coffee shop is currently open based on hours text"""
+        if not hours_text or hours_text.lower() in ['closed', 'hours n/a']:
+            return False
+        
+        try:
+            from datetime import datetime
+            current_time = datetime.now()
+            current_hour = current_time.hour
+            current_minute = current_time.minute
+            current_total_minutes = current_hour * 60 + current_minute
+            
+            # Handle common formats like "7:00 AM – 3:00 PM" or "7:30 AM – 2:30 PM"
+            if '–' in hours_text or '-' in hours_text:
+                # Split on either dash type
+                separator = '–' if '–' in hours_text else '-'
+                parts = hours_text.split(separator)
+                if len(parts) == 2:
+                    start_time_str = parts[0].strip()
+                    end_time_str = parts[1].strip()
+                    
+                    # Parse start time
+                    start_minutes = self._parse_time_to_minutes(start_time_str)
+                    end_minutes = self._parse_time_to_minutes(end_time_str)
+                    
+                    if start_minutes is not None and end_minutes is not None:
+                        # Handle overnight hours (like 10 PM - 2 AM)
+                        if end_minutes < start_minutes:
+                            # Overnight hours
+                            return current_total_minutes >= start_minutes or current_total_minutes <= end_minutes
+                        else:
+                            # Normal hours
+                            return start_minutes <= current_total_minutes <= end_minutes
+            
+            return False  # Default to closed if we can't parse
+        except:
+            return False  # Default to closed on any error
+    
+    def _parse_time_to_minutes(self, time_str: str) -> Optional[int]:
+        """Parse time string like '7:30 AM' to minutes since midnight"""
+        try:
+            time_str = time_str.strip()
+            
+            # Handle AM/PM
+            is_pm = 'PM' in time_str.upper()
+            is_am = 'AM' in time_str.upper()
+            
+            # Remove AM/PM
+            time_str = time_str.replace('AM', '').replace('PM', '').replace('am', '').replace('pm', '').strip()
+            
+            # Parse hour:minute
+            if ':' in time_str:
+                hour_str, minute_str = time_str.split(':')
+                hour = int(hour_str)
+                minute = int(minute_str)
+            else:
+                hour = int(time_str)
+                minute = 0
+            
+            # Convert to 24-hour format
+            if is_pm and hour != 12:
+                hour += 12
+            elif is_am and hour == 12:
+                hour = 0
+            
+            return hour * 60 + minute
+        except:
+            return None
     
     def _search_google_places_page(
         self, 

@@ -39,4 +39,5 @@ class SearchResult(BaseModel):
     query_location: Location = Field(..., description="Location that was searched")
     coffee_shops: List[CoffeeShop] = Field(..., description="List of found coffee shops")
     total_results: int = Field(..., description="Total number of results")
-    search_radius_km: float = Field(..., description="Search radius in kilometers") 
+    search_radius_km: float = Field(..., description="Search radius in kilometers")
+    use_miles: bool = Field(default=False, description="Whether to display distances in miles") 

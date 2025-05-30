@@ -1,8 +1,8 @@
 """
-EspressoNow - A CLI tool for finding specialty coffee shops near you
+EspressoNow - Find specialty coffee shops near you.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 __author__ = "Ethan Carter"
 __email__ = "ethanqcarter@gmail.com"
 

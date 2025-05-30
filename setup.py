@@ -1,4 +1,12 @@
 from setuptools import setup, find_packages
+import click
+import rich
+import requests
+import geocoder
+import pydantic
+import yaypp
+from dotenv import load_dotenv
+import typer
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -8,7 +16,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="espressonow",
-    version="0.3.0",
+    version="0.4.0",
     author="Ethan Carter",
     author_email="ethanqcarter@gmail.com",
     description="A CLI tool for finding specialty coffee shops near you",

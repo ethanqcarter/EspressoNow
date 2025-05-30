@@ -1,0 +1,207 @@
+%YAML 1.2
+---
+search_info:
+  location:
+    latitude: 35.617
+    longitude: 139.7486
+    address: Togoshi, Tokyo, JP
+    city: Togoshi
+    country: JP
+  search_radius: 2.0
+  radius_unit: miles
+  total_results: 10
+  exported_at: '2025-05-30T16:04:31.196064'
+coffee_shops:
+- name: Cafe Garage
+  address: 4-chōme-24-44 Takanawa, Minato City, Tokyo 108-0074, Japan
+  location:
+    latitude: 35.6255587
+    longitude: 139.73637309999998
+  rating: 4.7
+  price_level: null
+  phone: 03-3441-5438
+  opening_hours:
+  - 'Monday: 9:00 AM – 7:00 PM'
+  - 'Tuesday: Closed'
+  - 'Wednesday: Closed'
+  - 'Thursday: Closed'
+  - 'Friday: 9:00 AM – 7:00 PM'
+  - 'Saturday: 9:00 AM – 7:00 PM'
+  - 'Sunday: 9:00 AM – 7:00 PM'
+  distance: 1.4584612904882708
+  distance_unit: miles
+  place_id: ChIJbdClcFmKGGARx7hsSe4CuWk
+- name: Praliné Renard
+  address: 5-chōme-2-3 Higashiōi, Shinagawa City, Tokyo 140-0011, Japan
+  location:
+    latitude: 35.6080383
+    longitude: 139.7357044
+  rating: 4.7
+  price_level: null
+  phone: 090-5522-2921
+  opening_hours:
+  - 'Monday: 12:00 – 8:00 PM'
+  - 'Tuesday: Closed'
+  - 'Wednesday: 12:00 – 8:00 PM'
+  - 'Thursday: 12:00 – 8:00 PM'
+  - 'Friday: 12:00 – 8:00 PM'
+  - 'Saturday: 11:00 AM – 8:00 PM'
+  - 'Sunday: 11:00 AM – 8:00 PM'
+  distance: 1.5336104273746123
+  distance_unit: miles
+  place_id: ChIJJUHLrVSLGGAR8UZuggBGlPM
+- name: MAHIRO COFFEE ROASTERY
+  address: Japan, 〒141-0032 Tokyo, Shinagawa City, Ōsaki, 1-chōme−20−８ ＩＮＯビル－大崎 1F
+  location:
+    latitude: 35.6184189
+    longitude: 139.72992779999998
+  rating: 4.7
+  price_level: null
+  phone: 03-6421-7309
+  opening_hours:
+  - 'Monday: 8:00 AM – 7:00 PM'
+  - 'Tuesday: 8:00 AM – 7:00 PM'
+  - 'Wednesday: 8:00 AM – 7:00 PM'
+  - 'Thursday: 8:00 AM – 7:00 PM'
+  - 'Friday: 8:00 AM – 7:00 PM'
+  - 'Saturday: 8:00 AM – 7:00 PM'
+  - 'Sunday: Closed'
+  distance: 1.6951881351786602
+  distance_unit: miles
+  place_id: ChIJnfdtcwCLGGARtj89b94pwxc
+- name: unplugged COFFEE STAND
+  address: 5-chōme-19-4 Higashiōi, Shinagawa City, Tokyo 140-0011, Japan
+  location:
+    latitude: 35.6057755
+    longitude: 139.7358324
+  rating: 4.6
+  price_level: null
+  phone: null
+  opening_hours:
+  - 'Monday: 8:00 AM – 6:00 PM'
+  - 'Tuesday: 8:00 AM – 6:00 PM'
+  - 'Wednesday: 8:00 AM – 6:00 PM'
+  - 'Thursday: 8:00 AM – 6:00 PM'
+  - 'Friday: 8:00 AM – 6:00 PM'
+  - 'Saturday: 9:00 AM – 6:00 PM'
+  - 'Sunday: 9:00 AM – 6:00 PM'
+  distance: 1.6999775399221762
+  distance_unit: miles
+  place_id: ChIJ01dua0eLGGARDU4GcpRVL7Q
+- name: Mitsumata Coffee Roaster
+  address: Japan, 〒140-0014 Tokyo, Shinagawa City, Ōi, 4-chōme−1−２ メゾン・ド・ピュア 101
+  location:
+    latitude: 35.603750999999995
+    longitude: 139.7329072
+  rating: 4.6
+  price_level: null
+  phone: 03-6410-7970
+  opening_hours:
+  - 'Monday: Closed'
+  - 'Tuesday: 10:00 AM – 6:00 PM'
+  - 'Wednesday: 10:00 AM – 6:00 PM'
+  - 'Thursday: 10:00 AM – 6:00 PM'
+  - 'Friday: 10:00 AM – 6:00 PM'
+  - 'Saturday: 10:00 AM – 6:00 PM'
+  - 'Sunday: 10:00 AM – 6:00 PM'
+  distance: 2.045221985586155
+  distance_unit: miles
+  place_id: ChIJZSWW9K-LGGARAcZ7mEmq0qg
+- name: NOG COFFEE ROASTERS Shinagawa
+  address: 1-chōme-5-10 Higashishinagawa, Shinagawa City, Tokyo 140-0002, Japan
+  location:
+    latitude: 35.62257760000001
+    longitude: 139.7441388
+  rating: 4.5
+  price_level: null
+  phone: 050-6862-7277
+  opening_hours:
+  - 'Monday: 10:00 AM – 5:00 PM'
+  - 'Tuesday: 10:00 AM – 5:00 PM'
+  - 'Wednesday: 10:00 AM – 5:00 PM'
+  - 'Thursday: 10:00 AM – 5:00 PM'
+  - 'Friday: 10:00 AM – 5:00 PM'
+  - 'Saturday: 10:00 AM – 5:00 PM'
+  - 'Sunday: 10:00 AM – 5:00 PM'
+  distance: 0.7397695907322664
+  distance_unit: miles
+  place_id: ChIJyZx1BWeLGGARut8rnfEoK9g
+- name: Jubilee Coffee and Roaster
+  address: 3-chōme-18-10 Shirokanedai, Minato City, Tokyo 108-0071, Japan
+  location:
+    latitude: 35.6357226
+    longitude: 139.7216609
+  rating: 4.5
+  price_level: 2
+  phone: 03-6721-7939
+  opening_hours:
+  - 'Monday: Closed'
+  - 'Tuesday: Closed'
+  - 'Wednesday: 10:00 AM – 6:00 PM'
+  - 'Thursday: 10:00 AM – 6:00 PM'
+  - 'Friday: 10:00 AM – 6:00 PM'
+  - 'Saturday: 10:00 AM – 6:00 PM'
+  - 'Sunday: 10:00 AM – 6:00 PM'
+  distance: 3.20352120922591
+  distance_unit: miles
+  place_id: ChIJvaGcrByLGGARnJYwKGuFYd4
+- name: KAIDO books&coffee
+  address: Japan, 〒140-0001 Tokyo, Shinagawa City, Kitashinagawa, 2-chōme−3−７ 丸屋ビル
+    103
+  location:
+    latitude: 35.6193384
+    longitude: 139.7426298
+  rating: 4.4
+  price_level: 2
+  phone: 03-6433-0906
+  opening_hours:
+  - 'Monday: Closed'
+  - 'Tuesday: Closed'
+  - 'Wednesday: 9:00 AM – 5:30 PM'
+  - 'Thursday: 9:00 AM – 5:30 PM'
+  - 'Friday: 9:00 AM – 5:30 PM'
+  - 'Saturday: 9:00 AM – 6:00 PM'
+  - 'Sunday: 9:00 AM – 6:00 PM'
+  distance: 0.5990338307685065
+  distance_unit: miles
+  place_id: ChIJtR1ZfGiKGGARKJdrDg-X1VM
+- name: KITASANDO COFFEE ROASTERY
+  address: Japan, 〒108-0073 Tokyo, Minato City, Mita, 3-chōme−9−１１ Randl Takanawa
+    Gateway, 1階
+  location:
+    latitude: 35.6408833
+    longitude: 139.74065389999998
+  rating: 4.4
+  price_level: null
+  phone: null
+  opening_hours:
+  - 'Monday: 8:00 AM – 8:30 PM'
+  - 'Tuesday: 8:00 AM – 8:30 PM'
+  - 'Wednesday: 8:00 AM – 8:30 PM'
+  - 'Thursday: 8:00 AM – 8:30 PM'
+  - 'Friday: 8:00 AM – 8:30 PM'
+  - 'Saturday: 9:00 AM – 5:00 PM'
+  - 'Sunday: 9:00 AM – 5:00 PM'
+  distance: 2.7510939063241557
+  distance_unit: miles
+  place_id: ChIJvXIOKgCLGGARSgaf_QF1i24
+- name: Beans Station coffee
+  address: 2-chōme-1-14 Minamishinagawa, Shinagawa City, Tokyo 140-0004, Japan
+  location:
+    latitude: 35.6144678
+    longitude: 139.7418267
+  rating: 4.3
+  price_level: null
+  phone: 03-6712-8711
+  opening_hours:
+  - 'Monday: 10:30 AM – 7:30 PM'
+  - 'Tuesday: 10:30 AM – 7:30 PM'
+  - 'Wednesday: 10:30 AM – 7:30 PM'
+  - 'Thursday: 10:30 AM – 7:30 PM'
+  - 'Friday: 10:30 AM – 7:30 PM'
+  - 'Saturday: 10:00 AM – 5:00 PM'
+  - 'Sunday: Closed'
+  distance: 0.6739118320382086
+  distance_unit: miles
+  place_id: ChIJj0nqg2WKGGAR9MbOR2C33iY
+...
