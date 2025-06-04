@@ -219,10 +219,11 @@ espresso search --location "San Francisco, CA"
 ## Changelog
 
 
-### v0.4.2 (Latest)
-- **🎨 UI Enhancement**: Improved table formatting with fixed column width for coffee shop names
-- **📊 Better Display**: Enhanced CLI output readability with optimized column sizing
-- **🔧 Version Sync**: Updated version numbers across all configuration files
+### v0.4.3 (Latest)
+- **🔧 Packaging Fix**: Fixed PyPI installation issue by correcting license field format in pyproject.toml
+
+### v0.4.2
+- **🎨 UI Enhancement**: Improved table formatting with fixed column width for better coffee shop name display
 
 ### v0.4.1
 - **📚 Documentation**: Updated README with real San Francisco output examples

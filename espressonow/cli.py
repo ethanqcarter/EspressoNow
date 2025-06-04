@@ -197,7 +197,7 @@ def display_coffee_shops(coffee_shops: list[CoffeeShop], location: Location, use
 
 
 @click.group(invoke_without_command=True)
-@click.version_option(version="0.4.2", prog_name="EspressoNow")
+@click.version_option(version="0.4.3", prog_name="EspressoNow")
 @click.option('--radius', '-r', default=3.0, help='Search radius (default: 3.0)')
 @click.option('--max-results', '-n', default=10, help='Maximum number of results (default: 10)')
 @click.option('--location', '-l', help='Search location (address or "lat,lng")')
