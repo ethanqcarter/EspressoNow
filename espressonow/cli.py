@@ -4,7 +4,7 @@ Command Line Interface for EspressoNow
 
 import click
 import os
-from typing import Optional
+from typing import Optional, List
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -61,7 +61,7 @@ def generate_google_maps_link(coffee_shop: CoffeeShop) -> str:
     return f"https://maps.google.com/?q={encoded_query}"
 
 
-def get_current_day_hours(opening_hours: Optional[list]) -> str:
+def get_current_day_hours(opening_hours: Optional[List[str]]) -> str:
     """Get opening hours for the current day with color coding"""
     if not opening_hours:
         return "[dim]Hours N/A[/dim]"
@@ -168,7 +168,7 @@ def parse_time_to_minutes(time_str: str) -> Optional[int]:
         return None
 
 
-def display_coffee_shops(coffee_shops: list[CoffeeShop], location: Location, use_miles: bool = False):
+def display_coffee_shops(coffee_shops: List[CoffeeShop], location: Location, use_miles: bool = False):
     """Display coffee shops in a beautiful table"""
     if not coffee_shops:
         console.print("[yellow]No coffee shops found in the area.[/yellow]")
@@ -197,7 +197,7 @@ def display_coffee_shops(coffee_shops: list[CoffeeShop], location: Location, use
 
 
 @click.group(invoke_without_command=True)
-@click.version_option(version="0.4.3", prog_name="EspressoNow")
+@click.version_option(version="0.4.4", prog_name="EspressoNow")
 @click.option('--radius', '-r', default=3.0, help='Search radius (default: 3.0)')
 @click.option('--max-results', '-n', default=10, help='Maximum number of results (default: 10)')
 @click.option('--location', '-l', help='Search location (address or "lat,lng")')
@@ -459,7 +459,7 @@ def config():
         ))
 
 
-def export_to_yaml(coffee_shops: list[CoffeeShop], search_location: Location, search_radius: float, use_miles: bool, filename: str):
+def export_to_yaml(coffee_shops: List[CoffeeShop], search_location: Location, search_radius: float, use_miles: bool, filename: str):
     """Export coffee shop results to a YAML file using yaypp"""
     
     # Convert coffee shops to dictionaries

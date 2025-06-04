@@ -15,7 +15,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "espressonow"
-version = "0.4.3"
+version = "0.4.4"
 description = "A CLI tool for finding specialty coffee shops near you"
 readme = "README.md"
 requires-python = ">=3.8"

@@ -5,7 +5,7 @@ Core coffee shop finding functionality
 import requests
 import os
 import time
-from typing import List, Optional, Set
+from typing import List, Optional, Set, Tuple
 from .models import CoffeeShop, Location, SearchResult
 from .location import LocationService
 
@@ -292,7 +292,7 @@ class CoffeeShopFinder:
         radius_km: float, 
         page_size: int,
         page_token: Optional[str] = None
-    ) -> tuple[List[CoffeeShop], Optional[str]]:
+    ) -> Tuple[List[CoffeeShop], Optional[str]]:
         """
         Search a single page using Google Places API (New) Text Search
         

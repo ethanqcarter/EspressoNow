@@ -219,7 +219,10 @@ espresso search --location "San Francisco, CA"
 ## Changelog
 
 
-### v0.4.3 (Latest)
+### v0.4.4 (Latest)
+- **🐛 Compatibility Fix**: Fixed Python 3.8 compatibility by updating type hints (tuple→Tuple, list→List)
+
+### v0.4.3
 - **🔧 Packaging Fix**: Fixed PyPI installation issue by correcting license field format in pyproject.toml
 
 ### v0.4.2
