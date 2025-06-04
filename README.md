@@ -218,7 +218,13 @@ espresso search --location "San Francisco, CA"
 
 ## Changelog
 
-### v0.4.1 (Latest)
+
+### v0.4.2 (Latest)
+- **🎨 UI Enhancement**: Improved table formatting with fixed column width for coffee shop names
+- **📊 Better Display**: Enhanced CLI output readability with optimized column sizing
+- **🔧 Version Sync**: Updated version numbers across all configuration files
+
+### v0.4.1
 - **📚 Documentation**: Updated README with real San Francisco output examples
 - **🧹 Cleanup**: Removed YAML export documentation section for cleaner focus
 - **✨ Better Examples**: Added actual CLI output showing beautiful table formatting

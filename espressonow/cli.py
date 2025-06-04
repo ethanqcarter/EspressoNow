@@ -175,7 +175,7 @@ def display_coffee_shops(coffee_shops: list[CoffeeShop], location: Location, use
         return
     
     table = Table(title="☕ Specialty Coffee Shops Near You", show_header=True, header_style="bold magenta")
-    table.add_column("Name", style="cyan", no_wrap=True)
+    table.add_column("Name", style="cyan", width=40)
     table.add_column("Google Maps", style="blue")
     table.add_column("Rating", justify="center")
     table.add_column("Today's Hours", style="white")  # Changed from green to white since we color-code inside
@@ -197,7 +197,7 @@ def display_coffee_shops(coffee_shops: list[CoffeeShop], location: Location, use
 
 
 @click.group(invoke_without_command=True)
-@click.version_option(version="0.3.0", prog_name="EspressoNow")
+@click.version_option(version="0.4.2", prog_name="EspressoNow")
 @click.option('--radius', '-r', default=3.0, help='Search radius (default: 3.0)')
 @click.option('--max-results', '-n', default=10, help='Maximum number of results (default: 10)')
 @click.option('--location', '-l', help='Search location (address or "lat,lng")')

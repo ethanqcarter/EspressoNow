@@ -16,7 +16,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="espressonow",
-    version="0.4.1",
+    version="0.4.2",
     author="Ethan Carter",
     author_email="ethanqcarter@gmail.com",
     description="A CLI tool for finding specialty coffee shops near you",
